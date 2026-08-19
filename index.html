@@ -79,7 +79,7 @@
     function showBasicAI() {
   document.body.innerHTML = `
     <h1>① 生成AIの基礎</h1>
-
+<p id="progressText">進捗を読み込み中...</p>
     <h3>第1回　生成AIとは？</h3>
     <p>生成AIの基本を学びます。</p>
     <button onclick="window.open('https://www.youtube.com/', '_blank')">動画を見る</button>
@@ -150,6 +150,15 @@ async function showCompletedLessons() {
       button.disabled = true;
     }
   });
+  const progressText = document.getElementById('progressText');
+if (progressText) {
+  const completedCount = data.length;
+  const totalLessons = 3;
+  const percent = Math.round((completedCount / totalLessons) * 100);
+
+  progressText.innerText =
+    `学習進捗：${completedCount} / ${totalLessons} 完了（${percent}%）`;
+}
 }
 showCompletedLessons();
 </script>
