@@ -82,7 +82,31 @@
     });
   }
 
+async function checkAdminAndLoad() {
+  const { data: { user } } = await supabaseClient.auth.getUser();
+
+  if (!user) {
+    alert("ログインしてください");
+    window.location.href = "index.html";
+    return;
+  }
+
+  const { data: profile, error } = await supabaseClient
+    .from("profiles")
+    .select("role")
+    .eq("user_id", user.id)
+    .single();
+
+  if (error || !profile || profile.role !== "admin") {
+    alert("管理者のみアクセスできます");
+    window.location.href = "index.html";
+    return;
+  }
+
   loadStudents();
+}
+
+checkAdminAndLoad();
 </script>
 </body>
 </html>
