@@ -64,7 +64,7 @@
 
     <h3>① 生成AIの基礎</h3>
     <p>生成AIとは何か、基本から学びます。</p>
-    <button>学習する</button>
+   <button onclick="showBasicAI()">学習する</button>
 
     <h3>② プロンプトの基本</h3>
     <p>ChatGPTへの上手な指示の出し方を学びます。</p>
@@ -76,6 +76,26 @@
   `;
 }
     }
+    function showBasicAI() {
+  document.body.innerHTML = `
+    <h1>① 生成AIの基礎</h1>
+
+    <h3>第1回　生成AIとは？</h3>
+    <p>生成AIの基本を学びます。</p>
+    <button>動画を見る</button>
+
+    <h3>第2回　ChatGPTとは？</h3>
+    <p>ChatGPTの特徴を学びます。</p>
+    <button>動画を見る</button>
+
+    <h3>第3回　生成AIでできること</h3>
+    <p>仕事での活用例を学びます。</p>
+    <button>動画を見る</button>
+
+    <br><br>
+    <button onclick="location.reload()">学習メニューに戻る</button>
+  `;
+}
   </script>
 
 </body>
