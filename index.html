@@ -96,7 +96,33 @@
     <button onclick="location.reload()">学習メニューに戻る</button>
   `;
 }
-  </script>
+    }
+
+async function completeLesson(lessonId) {
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    alert('ログインしてください');
+    return;
+  }
+
+  const { error } = await supabase
+    .from('learning_progress')
+    .upsert({
+      user_id: user.id,
+      lesson_id: lessonId,
+      completed: true,
+      completed_at: new Date().toISOString()
+    });
+
+  if (error) {
+    console.error(error);
+    alert('学習記録の保存に失敗しました');
+  } else {
+    alert('学習完了を記録しました！');
+  }
+}
+</script>
 
 </body>
 </html>
