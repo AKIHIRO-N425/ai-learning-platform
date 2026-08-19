@@ -123,6 +123,34 @@ async function completeLesson(lessonId) {
     alert('学習完了を記録しました！');
   }
 }
+async function showCompletedLessons() {
+  const { data: { user } } = await supabaseClient.auth.getUser();
+
+  if (!user) return;
+
+  const { data, error } = await supabaseClient
+    .from('learning_progress')
+    .select('lesson_id')
+    .eq('user_id', user.id)
+    .eq('completed', true);
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  data.forEach(item => {
+    const button = document.querySelector(
+      `button[onclick="completeLesson('${item.lesson_id}')"]`
+    );
+
+    if (button) {
+      button.innerText = '✅ 完了済み';
+      button.disabled = true;
+    }
+  });
+}
+showCompletedLessons();
 </script>
 
 </body>
