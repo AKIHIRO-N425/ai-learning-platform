@@ -96,7 +96,6 @@
     <button onclick="location.reload()">学習メニューに戻る</button>
   `;
 }
-    }
 
 async function completeLesson(lessonId) {
   const { data: { user } } = await supabase.auth.getUser();
