@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>学習進捗 管理画面</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+
+  <h1>学習進捗 管理画面</h1>
+
+  <table border="1" cellpadding="10">
+    <thead>
+      <tr>
+        <th>受講者名</th>
+        <th>完了数</th>
+        <th>進捗率</th>
+      </tr>
+    </thead>
+
+    <tbody id="studentList">
+      <tr>
+        <td colspan="3">読み込み中...</td>
+      </tr>
+    </tbody>
+  </table>
+<script>
+  const supabaseUrl = "https://xjwmgvvoxunsqdjttpdo.supabase.co";
+  const supabaseKey = "sb_publishable_VOQIWc0dAsPP233GHl9cog_Kle9Ybfd";
+
+  const supabaseClient =
+    supabase.createClient(supabaseUrl, supabaseKey);
+
+  async function loadStudents() {
+
+    const { data: profiles, error: profileError } =
+      await supabaseClient
+        .from("profiles")
+        .select("user_id, name");
+
+    if (profileError) {
+      console.error(profileError);
+      return;
+    }
+
+    const { data: progress, error: progressError } =
+      await supabaseClient
+        .from("learning_progress")
+        .select("user_id, lesson_id, completed")
+        .eq("completed", true);
+
+    if (progressError) {
+      console.error(progressError);
+      return;
+    }
+
+    const studentList = document.getElementById("studentList");
+    studentList.innerHTML = "";
+
+    profiles.forEach(profile => {
+
+      const completedLessons =
+        progress.filter(item =>
+          item.user_id === profile.user_id
+        ).length;
+
+      const totalLessons = 3;
+
+      const percent =
+        Math.round((completedLessons / totalLessons) * 100);
+
+      studentList.innerHTML += `
+        <tr>
+          <td>${profile.name || "名前未設定"}</td>
+          <td>${completedLessons} / ${totalLessons}</td>
+          <td>${percent}%</td>
+        </tr>
+      `;
+    });
+  }
+
+  loadStudents();
+</script>
+</body>
+</html>
