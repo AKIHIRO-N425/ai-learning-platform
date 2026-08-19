@@ -108,11 +108,13 @@ async function completeLesson(lessonId) {
   const { error } = await supabaseClient
     .from('learning_progress')
     .upsert({
-      user_id: user.id,
-      lesson_id: lessonId,
-      completed: true,
-      completed_at: new Date().toISOString()
-    });
+  user_id: user.id,
+  lesson_id: lessonId,
+  completed: true,
+  completed_at: new Date().toISOString()
+}, {
+  onConflict: 'user_id,lesson_id'
+});
 
   if (error) {
     console.error(error);
