@@ -57,10 +57,24 @@
       if (error) {
         document.getElementById("message").innerText =
           "ログイン失敗：" + error.message;
-      } else {
-        document.getElementById("message").innerText =
-          "ログイン成功！";
-      }
+     } else {
+  document.body.innerHTML = `
+    <h1>AI学習プラットフォーム</h1>
+    <h2>学習メニュー</h2>
+
+    <h3>① 生成AIの基礎</h3>
+    <p>生成AIとは何か、基本から学びます。</p>
+    <button>学習する</button>
+
+    <h3>② プロンプトの基本</h3>
+    <p>ChatGPTへの上手な指示の出し方を学びます。</p>
+    <button>学習する</button>
+
+    <h3>③ ChatGPTの業務活用</h3>
+    <p>仕事でChatGPTを活用する方法を学びます。</p>
+    <button>学習する</button>
+  `;
+}
     }
   </script>
 
