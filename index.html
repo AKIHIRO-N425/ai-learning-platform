@@ -758,9 +758,7 @@ showCompletedLessons('course1');
     async function checkLoginStatus() {
   const { data: { user } } = await supabaseClient.auth.getUser();
 
-  if (user) {
-    showMenu();
-  }
+ 
 }
 
 checkLoginStatus();
