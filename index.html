@@ -474,6 +474,11 @@ function showMenu() {
           <h2>学習ダッシュボード</h2>
           <p>左のコースを選んで学習を進めてください。</p>
         </div>
+        <div class="dashboard-card">
+  <h2>理解度テスト</h2>
+  <p>学習内容の理解度をテストで確認できます。</p>
+  <button onclick="showTest()">テストを受ける</button>
+</div>
       </main>
 
     </div>
@@ -550,6 +555,55 @@ function showMenu() {
 `;
 
   showCompletedLessons(courseId);
+}
+    function showTest() {
+      document.body.innerHTML = `
+      <div class="test-page">
+      <h1>理解度テスト</h1>
+      <p>第1問：生成AIとは何でしょうか？</p>
+      <label><input type="radio" name="q1"> 文章や画像などを新しく生成できるAI</label>
+      <br>
+<label><input type="radio" name="q1"> インターネットだけを検索するAI</label>
+<br>
+<label><input type="radio" name="q1"> パソコンを自動で修理するAI</label>
+
+<h3>第2問：生成AIの活用例として適切なものは？</h3>
+<label><input type="radio" name="q2"> 文章の作成や要約</label>
+<br>
+<label><input type="radio" name="q2"> パソコンの電源を物理的に入れる</label>
+<br>
+<label><input type="radio" name="q2"> 壊れた部品を自動交換する</label>
+
+<br><br>
+<button onclick="checkTest()">回答する</button>
+<p id="testResult"></p>
+<br><br>
+<button onclick="showMenu()">学習メニューに戻る</button>
+
+</div>
+`;
+}
+    function checkTest() {
+  const q1 = document.querySelector('input[name="q1"]:checked');
+  const q2 = document.querySelector('input[name="q2"]:checked');
+  const result = document.getElementById("testResult");
+
+  if (!q1 || !q2) {
+    result.textContent = "すべての問題に回答してください。";
+    return;
+  }
+
+  let score = 0;
+
+  if (q1.parentElement.textContent.includes("文章や画像などを新しく生成できるAI")) {
+    score++;
+  }
+
+  if (q2.parentElement.textContent.includes("文章の作成や要約")) {
+    score++;
+  }
+
+  result.textContent = `2問中 ${score}問正解です！`;
 }
     function selectLesson(courseId, lessonIndex) {
   const course = courses[courseId];
