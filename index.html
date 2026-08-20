@@ -122,6 +122,7 @@ async function completeLesson(lessonId) {
     alert('学習記録の保存に失敗しました');
   } else {
     alert('学習完了を記録しました！');
+  await showCompletedLessons();
   }
 }
 async function showCompletedLessons() {
