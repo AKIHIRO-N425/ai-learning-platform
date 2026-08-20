@@ -518,6 +518,10 @@ function showMenu() {
       >
         学習完了にする
       </button>
+      <button
+  onclick="event.stopPropagation(); showTest('${courseId}', ${index})">
+  理解度テスト
+</button>
     </div>
   </div>
 `;
@@ -869,11 +873,7 @@ videoPlaceholder.innerHTML = `
   </button>
   <br><br>
 
-<button
-  class="video-complete-button"
-  onclick="showTest('${courseId}', ${lessonIndex})">
-  理解度テストを受ける
-</button>
+
 `;
 }
     function showBasicAI() {
