@@ -144,7 +144,7 @@
 
     <h3>② プロンプトの基本</h3>
     <p>ChatGPTへの上手な指示の出し方を学びます。</p>
-    <button>学習する</button>
+    <button onclick="showPromptBasic()">学習する</button>
 
     <h3>③ ChatGPTの業務活用</h3>
     <p>仕事でChatGPTを活用する方法を学びます。</p>
@@ -174,7 +174,31 @@
   showCompletedLessons();
 }
 
-async function completeLesson(lessonId) {
+  function showPromptBasic() {
+  document.body.innerHTML = `
+    <h1>プロンプトの基本</h1>
+    <p id="progressText">進捗を読み込み中...</p>
+
+    <h3>第1回 良い指示の基本</h3>
+    <p>ChatGPTに分かりやすく指示する基本を学びます。</p>
+    <button onclick="completeLesson('lesson1', 'course2')">完了</button>
+
+    <h3>第2回 具体的に伝えるコツ</h3>
+    <p>目的や条件を具体的に伝える方法を学びます。</p>
+    <button onclick="completeLesson('lesson2', 'course2')">完了</button>
+
+    <h3>第3回 仕事で使えるプロンプト例</h3>
+    <p>実際の仕事で使える指示文の作り方を学びます。</p>
+    <button onclick="completeLesson('lesson3', 'course2')">完了</button>
+
+    <br><br>
+    <button onclick="location.reload()">学習メニューに戻る</button>
+  `;
+
+  showCompletedLessons('course2');
+}
+
+async function completeLesson(lessonId, courseId = 'basic_ai') {
   const { data: { user } } = await supabaseClient.auth.getUser();
 
   if (!user) {
@@ -186,7 +210,7 @@ async function completeLesson(lessonId) {
     .from('learning_progress')
     .upsert({
   user_id: user.id,
-  course_id: 'basic_ai',
+ course_id: courseId,
   lesson_id: lessonId,
   completed: true,
   completed_at: new Date().toISOString()
@@ -199,10 +223,10 @@ async function completeLesson(lessonId) {
     alert('学習記録の保存に失敗しました');
   } else {
     alert('学習完了を記録しました！');
-  await showCompletedLessons();
+  await showCompletedLessons(courseId);
   }
 }
-async function showCompletedLessons() {
+async function showCompletedLessons(courseId = 'basic_ai') {
   const { data: { user } } = await supabaseClient.auth.getUser();
 
   if (!user) return;
@@ -211,7 +235,7 @@ async function showCompletedLessons() {
     .from('learning_progress')
 .select('lesson_id')
 .eq('user_id', user.id)
-.eq('course_id', 'basic_ai')
+.eq('course_id', courseId)
 .eq('completed', true);
 
   if (error) {
