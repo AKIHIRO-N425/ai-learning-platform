@@ -81,6 +81,75 @@
   p {
     line-height: 1.7;
   }
+  .dashboard-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  min-height: 100vh;
+}
+
+.sidebar {
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  padding: 24px 18px;
+  overflow-y: auto;
+}
+
+.sidebar h2 {
+  margin-top: 0;
+  font-size: 18px;
+}
+
+.sidebar-course {
+  padding: 12px 10px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.sidebar-course:hover {
+  background: #f1f5f9;
+}
+
+.main-content {
+  padding: 40px;
+}
+
+.dashboard-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.06);
+}
+
+.progress-bar {
+  width: 100%;
+  height: 10px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: #6366f1;
+  border-radius: 999px;
+}
+
+@media (max-width: 800px) {
+  .dashboard-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .main-content {
+    padding: 24px;
+  }
+}
 </style>
 </head>
 
@@ -275,24 +344,37 @@ const courses = {
           "ログイン失敗：" + error.message;
      } else {
   document.body.innerHTML = `
-    <h1>AI学習プラットフォーム</h1>
-    <h2>学習メニュー</h2>
+  <div class="dashboard-layout">
 
-    <div id="courseList"></div>
-  `;
-        const courseList = document.getElementById("courseList");
+    <aside class="sidebar">
+      <h2>学習コース</h2>
+      <div id="courseList"></div>
+    </aside>
+
+    <main class="main-content">
+      <h1>AI学習プラットフォーム</h1>
+
+      <div class="dashboard-card">
+        <h2>学習ダッシュボード</h2>
+        <p>左のコースを選んで学習を進めてください。</p>
+      </div>
+    </main>
+
+  </div>
+`;
+
+const courseList = document.getElementById("courseList");
 
 Object.entries(courses).forEach(([courseId, course], index) => {
   courseList.innerHTML += `
-    <div>
-      <h3>第${index + 1}コース　${course.title}</h3>
-      <p>${course.lessons.length}本の教材</p>
-      <button onclick="showCourse('${courseId}')">学習する</button>
+    <div class="sidebar-course" onclick="showCourse('${courseId}')">
+      <strong>第${index + 1}コース</strong><br>
+      ${course.title}<br>
+      <small>${course.lessons.length}本の教材</small>
     </div>
   `;
 });
 }
-    }
     function showCourse(courseId) {
   const course = courses[courseId];
 
