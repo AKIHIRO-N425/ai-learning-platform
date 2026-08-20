@@ -499,7 +499,7 @@ function showMenu() {
 
   const lessonsHtml = course.lessons.map((lessonTitle, index) => {
     const lessonId = `lesson${index + 1}`;
-const isCompleted = completedLessons.includes(lessonId);
+
     return `
   <div class="lesson-card">
     <div class="lesson-card-header">
