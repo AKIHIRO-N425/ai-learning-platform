@@ -503,7 +503,7 @@ function showMenu() {
     const lessonId = `lesson${index + 1}`;
 
     return `
-  <div class="lesson-card">
+<div class="lesson-card" onclick="selectLesson('${courseId}', ${index})">
     <div class="lesson-card-header">
       <div>
         <span class="lesson-number">第${index + 1}回</span>
@@ -560,6 +560,30 @@ function showMenu() {
 `;
 
   showCompletedLessons(courseId);
+}
+    function selectLesson(courseId, lessonIndex) {
+  const course = courses[courseId];
+  if (!course) return;
+
+  const lessonTitle = course.lessons[lessonIndex];
+
+ const videoIds = [
+  "aircAruvnkK",
+  "aircAruvnkK",
+  "aircAruvnkK",
+  "aircAruvnkK",
+  "aircAruvnkK",
+  "aircAruvnkK"
+];
+
+document.querySelector(".video-area h1").textContent =
+  `第${lessonIndex + 1}回 ${lessonTitle}`;
+
+const iframe = document.querySelector(".video-placeholder iframe");
+
+if (iframe) {
+  iframe.src = `https://www.youtube.com/embed/${videoIds[lessonIndex]}`;
+}
 }
     function showBasicAI() {
   document.body.innerHTML = `
