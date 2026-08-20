@@ -278,20 +278,58 @@ const courses = {
     <h1>AI学習プラットフォーム</h1>
     <h2>学習メニュー</h2>
 
-    <h3>① 生成AIの基礎</h3>
-    <p>生成AIとは何か、基本から学びます。</p>
-   <button onclick="showBasicAI()">学習する</button>
-
-    <h3>② プロンプトの基本</h3>
-    <p>ChatGPTへの上手な指示の出し方を学びます。</p>
-    <button onclick="showPromptBasic()">学習する</button>
-
-    <h3>③ ChatGPTの業務活用</h3>
-    <p>仕事でChatGPTを活用する方法を学びます。</p>
-    <button>学習する</button>
+    <div id="courseList"></div>
   `;
+        const courseList = document.getElementById("courseList");
+
+Object.entries(courses).forEach(([courseId, course], index) => {
+  courseList.innerHTML += `
+    <div>
+      <h3>第${index + 1}コース　${course.title}</h3>
+      <p>${course.lessons.length}本の教材</p>
+      <button onclick="showCourse('${courseId}')">学習する</button>
+    </div>
+  `;
+});
 }
     }
+    function showCourse(courseId) {
+  const course = courses[courseId];
+
+  if (!course) {
+    alert("コースが見つかりません");
+    return;
+  }
+
+  const lessonsHtml = course.lessons.map((lessonTitle, index) => {
+    const lessonId = `lesson${index + 1}`;
+
+    return `
+      <div>
+        <h3>第${index + 1}回　${lessonTitle}</h3>
+        <button
+          data-lesson-id="${lessonId}"
+          onclick="completeLesson('${lessonId}', '${courseId}')"
+        >
+          学習完了にする
+        </button>
+      </div>
+    `;
+  }).join("");
+
+  document.body.innerHTML = `
+    <h1>${course.title}</h1>
+
+    <p id="progressText">進捗を読み込み中...</p>
+
+    ${lessonsHtml}
+
+    <br><br>
+    <button onclick="location.reload()">学習メニューに戻る</button>
+  `;
+
+  showCompletedLessons(courseId);
+}
     function showBasicAI() {
   document.body.innerHTML = `
     <h1>① 生成AIの基礎</h1>
@@ -385,8 +423,8 @@ async function showCompletedLessons(courseId = 'basic_ai') {
 
   data.forEach(item => {
     const button = document.querySelector(
-      `button[onclick="completeLesson('${item.lesson_id}')"]`
-    );
+  `button[data-lesson-id="${item.lesson_id}"]`
+);
 
     if (button) {
       button.innerText = '✅ 完了済み';
@@ -396,14 +434,13 @@ async function showCompletedLessons(courseId = 'basic_ai') {
   const progressText = document.getElementById('progressText');
 if (progressText) {
   const completedCount = data.length;
-  const totalLessons = 3;
-  const percent = Math.round((completedCount / totalLessons) * 100);
-
+const totalLessons = courses[courseId]?.lessons.length || 0;
+const percent = Math.round((completedCount / totalLessons) * 100);
   progressText.innerText =
     `学習進捗：${completedCount} / ${totalLessons} 完了（${percent}%）`;
 }
 }
-showCompletedLessons();
+showCompletedLessons('course1');
     async function checkLoginStatus() {
   const { data: { user } } = await supabaseClient.auth.getUser();
 
