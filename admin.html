@@ -97,7 +97,7 @@
     const { data: progress, error: progressError } =
       await supabaseClient
         .from("learning_progress")
-        .select("user_id, lesson_id, completed")
+        .select("user_id, course_id, lesson_id, completed")
         .eq("completed", true);
 
     if (progressError) {
@@ -111,9 +111,10 @@
     profiles.forEach(profile => {
 
       const completedLessons =
-        progress.filter(item =>
-          item.user_id === profile.user_id
-        ).length;
+  progress.filter(item =>
+    item.user_id === profile.user_id &&
+    item.course_id === 'basic_ai'
+  ).length;
 
       const totalLessons = 3;
 
