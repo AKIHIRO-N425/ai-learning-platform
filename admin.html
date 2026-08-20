@@ -64,8 +64,8 @@
     <thead>
       <tr>
         <th>受講者名</th>
-        <th>完了数</th>
-        <th>進捗率</th>
+<th>生成AIの基礎</th>
+<th>第2コース</th>
       </tr>
     </thead>
 
@@ -109,25 +109,31 @@
     studentList.innerHTML = "";
 
     profiles.forEach(profile => {
+const basicCompleted = progress.filter(item =>
+  item.user_id === profile.user_id &&
+  item.course_id === 'basic_ai'
+).length;
 
-      const completedLessons =
-  progress.filter(item =>
-    item.user_id === profile.user_id &&
-    item.course_id === 'basic_ai'
-  ).length;
+const basicTotal = 3;
+const basicPercent = Math.round((basicCompleted / basicTotal) * 100);
 
-      const totalLessons = 3;
+const course2Completed = progress.filter(item =>
+  item.user_id === profile.user_id &&
+  item.course_id === 'course2'
+).length;
 
-      const percent =
-        Math.round((completedLessons / totalLessons) * 100);
+const course2Total = 3;
+const course2Percent = Math.round((course2Completed / course2Total) * 100);
 
-      studentList.innerHTML += `
-        <tr>
-          <td>${profile.name || "名前未設定"}</td>
-          <td>${completedLessons} / ${totalLessons}</td>
-          <td>${percent}%</td>
-        </tr>
-      `;
+studentList.innerHTML += `
+  <tr>
+    <td>${profile.name || "名前未設定"}</td>
+    <td>${basicCompleted} / ${basicTotal}（${basicPercent}%）</td>
+    <td>${course2Completed} / ${course2Total}（${course2Percent}%）</td>
+  </tr>
+`;
+     
+       
     });
   }
 
