@@ -161,6 +161,15 @@ if (progressText) {
 }
 }
 showCompletedLessons();
+    async function checkLoginStatus() {
+  const { data: { user } } = await supabaseClient.auth.getUser();
+
+  if (user) {
+    showMenu();
+  }
+}
+
+checkLoginStatus();
 </script>
 
 </body>
