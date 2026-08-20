@@ -556,54 +556,283 @@ function showMenu() {
 
   showCompletedLessons(courseId);
 }
-    function showTest() {
-      document.body.innerHTML = `
-      <div class="test-page">
-      <h1>理解度テスト</h1>
-      <p>第1問：生成AIとは何でしょうか？</p>
-      <label><input type="radio" name="q1"> 文章や画像などを新しく生成できるAI</label>
-      <br>
-<label><input type="radio" name="q1"> インターネットだけを検索するAI</label>
-<br>
-<label><input type="radio" name="q1"> パソコンを自動で修理するAI</label>
+   const lessonTests = {
+  course1: [
+    {
+      title: "生成AIの定義",
+      questions: [
+        {
+          text: "生成AIとは何ですか？",
+          choices: [
+            "文章や画像などの新しいコンテンツを生成できるAI",
+            "インターネット検索だけを行うAI",
+            "パソコンを自動修理するAI"
+          ],
+          answer: 0
+        },
+        {
+          text: "生成AIが作れるものとして適切なのは？",
+          choices: [
+            "文章・画像・音声など",
+            "物理的なパソコン部品",
+            "電気そのもの"
+          ],
+          answer: 0
+        },
+        {
+          text: "生成AIを利用するときに重要なことは？",
+          choices: [
+            "出力内容を確認して利用する",
+            "すべて無条件に正しいと考える",
+            "確認せずそのまま公開する"
+          ],
+          answer: 0
+        }
+      ]
+    },
+    {
+      title: "大規模言語モデル（LLM）の仕組み",
+      questions: [
+        {
+          text: "LLMとは何の略ですか？",
+          choices: [
+            "Large Language Model",
+            "Long Learning Machine",
+            "Local Language Method"
+          ],
+          answer: 0
+        },
+        {
+          text: "LLMは主に何を予測して文章を生成しますか？",
+          choices: [
+            "次に続く可能性の高い単語やトークン",
+            "パソコンの故障箇所",
+            "利用者の住所"
+          ],
+          answer: 0
+        },
+        {
+          text: "LLMの特徴として適切なのは？",
+          choices: [
+            "大量の文章データから言語パターンを学習する",
+            "必ず正しい回答だけを返す",
+            "インターネットがなければ一切動作しない"
+          ],
+          answer: 0
+        }
+      ]
+    },
+    {
+      title: "基本用語解説：プロンプト",
+      questions: [
+        {
+          text: "プロンプトとは何ですか？",
+          choices: [
+            "AIに与える指示や質問",
+            "AIの電源装置",
+            "AI専用の画像形式"
+          ],
+          answer: 0
+        },
+        {
+          text: "良いプロンプトの特徴は？",
+          choices: [
+            "目的や条件が具体的",
+            "できるだけ曖昧",
+            "単語を1つだけ入力する"
+          ],
+          answer: 0
+        },
+        {
+          text: "出力形式を指定することは？",
+          choices: [
+            "回答を希望する形に近づけるのに有効",
+            "AIには一切影響しない",
+            "必ずエラーになる"
+          ],
+          answer: 0
+        }
+      ]
+    },
+    {
+      title: "基本用語解説：ハルシネーション",
+      questions: [
+        {
+          text: "AIのハルシネーションとは？",
+          choices: [
+            "事実に基づかないもっともらしい情報を生成すること",
+            "処理速度が速くなること",
+            "画像だけを生成すること"
+          ],
+          answer: 0
+        },
+        {
+          text: "ハルシネーションへの適切な対処は？",
+          choices: [
+            "信頼できる情報源で確認する",
+            "AIの回答を必ず正しいと考える",
+            "確認せず社外へ送る"
+          ],
+          answer: 0
+        },
+        {
+          text: "特に確認が重要なのは？",
+          choices: [
+            "重要な意思決定に使う情報",
+            "文字の色",
+            "画面の大きさ"
+          ],
+          answer: 0
+        }
+      ]
+    },
+    {
+      title: "基本用語解説：学習データ",
+      questions: [
+        {
+          text: "学習データとは？",
+          choices: [
+            "AIがパターンを学ぶために使用するデータ",
+            "パソコンの電源情報",
+            "利用者のパスワード"
+          ],
+          answer: 0
+        },
+        {
+          text: "学習データの品質が重要な理由は？",
+          choices: [
+            "AIの出力品質に影響するため",
+            "画面の色が変わるため",
+            "キーボードが速くなるため"
+          ],
+          answer: 0
+        },
+        {
+          text: "偏った学習データを使うと？",
+          choices: [
+            "出力にも偏りが生じる可能性がある",
+            "必ず正確になる",
+            "AIが停止する"
+          ],
+          answer: 0
+        }
+      ]
+    },
+    {
+      title: "基本用語解説：トークン",
+      questions: [
+        {
+          text: "トークンとは？",
+          choices: [
+            "AIが文章を処理する際の文字や単語の単位",
+            "ログイン用パスワードだけを指す言葉",
+            "動画ファイルの種類"
+          ],
+          answer: 0
+        },
+        {
+          text: "文章が長くなると一般的にどうなりますか？",
+          choices: [
+            "使用するトークン数が増える",
+            "トークン数は必ず減る",
+            "トークンとは無関係"
+          ],
+          answer: 0
+        },
+        {
+          text: "トークン数が関係するものは？",
+          choices: [
+            "AIが一度に扱える文章量",
+            "パソコンの画面サイズ",
+            "マウスの速度"
+          ],
+          answer: 0
+        }
+      ]
+    }
+  ]
+};
 
-<h3>第2問：生成AIの活用例として適切なものは？</h3>
-<label><input type="radio" name="q2"> 文章の作成や要約</label>
-<br>
-<label><input type="radio" name="q2"> パソコンの電源を物理的に入れる</label>
-<br>
-<label><input type="radio" name="q2"> 壊れた部品を自動交換する</label>
+function showTest(courseId, lessonIndex) {
+  const courseTests = lessonTests[courseId];
 
-<br><br>
-<button onclick="checkTest()">回答する</button>
-<p id="testResult"></p>
-<br><br>
-<button onclick="showMenu()">学習メニューに戻る</button>
-
-</div>
-`;
-}
-    function checkTest() {
-  const q1 = document.querySelector('input[name="q1"]:checked');
-  const q2 = document.querySelector('input[name="q2"]:checked');
-  const result = document.getElementById("testResult");
-
-  if (!q1 || !q2) {
-    result.textContent = "すべての問題に回答してください。";
+  if (!courseTests || !courseTests[lessonIndex]) {
+    alert("この教材のテストはまだ準備されていません。");
     return;
   }
 
+  const test = courseTests[lessonIndex];
+
+  const questionsHtml = test.questions.map((question, qIndex) => {
+    const choicesHtml = question.choices.map((choice, cIndex) => `
+      <label style="display:block; margin:10px 0;">
+        <input
+          type="radio"
+          name="q${qIndex}"
+          value="${cIndex}"
+        >
+        ${choice}
+      </label>
+    `).join("");
+
+    return `
+      <div class="dashboard-card">
+        <h3>第${qIndex + 1}問</h3>
+        <p>${question.text}</p>
+        ${choicesHtml}
+      </div>
+    `;
+  }).join("");
+
+  document.body.innerHTML = `
+    <div class="main-content">
+      <h1>${test.title}　理解度テスト</h1>
+      <p>3問・70%以上で合格</p>
+
+      ${questionsHtml}
+
+      <button onclick="checkLessonTest('${courseId}', ${lessonIndex})">
+        採点する
+      </button>
+
+      <p id="testResult"></p>
+
+      <br>
+      <button onclick="showCourse('${courseId}')">
+        教材一覧に戻る
+      </button>
+    </div>
+  `;
+}
+
+function checkLessonTest(courseId, lessonIndex) {
+  const test = lessonTests[courseId][lessonIndex];
   let score = 0;
 
-  if (q1.parentElement.textContent.includes("文章や画像などを新しく生成できるAI")) {
-    score++;
+  for (let i = 0; i < test.questions.length; i++) {
+    const selected =
+      document.querySelector(`input[name="q${i}"]:checked`);
+
+    if (!selected) {
+      document.getElementById("testResult").textContent =
+        "すべての問題に回答してください。";
+      return;
+    }
+
+    if (Number(selected.value) === test.questions[i].answer) {
+      score++;
+    }
   }
 
-  if (q2.parentElement.textContent.includes("文章の作成や要約")) {
-    score++;
-  }
+  const percent =
+    Math.round((score / test.questions.length) * 100);
 
-  result.textContent = `2問中 ${score}問正解です！`;
+  const passed = percent >= 70;
+
+  document.getElementById("testResult").innerHTML =
+    passed
+      ? `✅ 合格です！ ${score} / ${test.questions.length}問正解（${percent}%）`
+      : `❌ 不合格です。${score} / ${test.questions.length}問正解（${percent}%）<br>もう一度復習して挑戦しましょう。`;
 }
     function selectLesson(courseId, lessonIndex) {
   const course = courses[courseId];
@@ -642,6 +871,13 @@ videoPlaceholder.innerHTML = `
     onclick="completeLesson('${lessonId}', '${courseId}')">
     学習完了にする
   </button>
+  <br><br>
+
+<button
+  class="video-complete-button"
+  onclick="showTest('${courseId}', ${lessonIndex})">
+  理解度テストを受ける
+</button>
 `;
 }
     function showBasicAI() {
