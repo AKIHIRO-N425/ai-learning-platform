@@ -474,7 +474,17 @@ function showMenu() {
           <h2>学習ダッシュボード</h2>
           <p>左のコースを選んで学習を進めてください。</p>
         </div>
-      
+      <div class="dashboard-card">
+  <h2>全体の進捗</h2>
+
+  <p id="overallLearningProgress">
+    学習進捗を読み込み中...
+  </p>
+
+  <p id="overallTestProgress">
+    テスト進捗を読み込み中...
+  </p>
+</div>
       </main>
 
     </div>
@@ -491,6 +501,61 @@ function showMenu() {
       </div>
     `;
   });
+  updateOverallProgress();
+}
+    async function updateOverallProgress() {
+  const learningEl = document.getElementById("overallLearningProgress");
+  const testEl = document.getElementById("overallTestProgress");
+
+  if (!learningEl || !testEl) return;
+
+  const { data: { user } } = await supabaseClient.auth.getUser();
+
+  if (!user) {
+    learningEl.textContent = "ログインすると進捗が表示されます";
+    testEl.textContent = "";
+    return;
+  }
+
+  const totalLessons = Object.values(courses)
+    .reduce((sum, course) => sum + course.lessons.length, 0);
+
+  const { data, error } = await supabaseClient
+    .from("learning_progress")
+    .select("course_id, lesson_id")
+    .eq("user_id", user.id)
+    .eq("completed", true);
+
+  if (error) {
+    console.error(error);
+    learningEl.textContent = "学習進捗を取得できませんでした";
+    return;
+  }
+
+  const completedLessons = data ? data.length : 0;
+  const learningPercent = totalLessons
+    ? Math.round((completedLessons / totalLessons) * 100)
+    : 0;
+
+  let passedTests = 0;
+
+  Object.entries(courses).forEach(([courseId, course]) => {
+    course.lessons.forEach((lesson, index) => {
+      if (localStorage.getItem(`testPassed_${courseId}_${index}`) === "true") {
+        passedTests++;
+      }
+    });
+  });
+
+  const testPercent = totalLessons
+    ? Math.round((passedTests / totalLessons) * 100)
+    : 0;
+
+  learningEl.textContent =
+    `📚 全体の学習進捗：${completedLessons} / ${totalLessons} 完了（${learningPercent}%）`;
+
+  testEl.textContent =
+    `✅ 理解度テスト：${passedTests} / ${totalLessons} 合格（${testPercent}%）`;
 }
     function showCourse(courseId) {
   const course = courses[courseId];
