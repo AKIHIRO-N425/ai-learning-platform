@@ -428,6 +428,13 @@ const courses = {
  showMenu();
 }
 }
+  
+
+async function logout() {
+  await supabaseClient.auth.signOut();
+  location.reload();
+}
+
 function showMenu() {
   document.body.innerHTML = `
     <div class="dashboard-layout">
@@ -435,6 +442,7 @@ function showMenu() {
       <aside class="sidebar">
         <h2>学習コース</h2>
         <div id="courseList"></div>
+        <button onclick="logout()">ログアウト</button>
       </aside>
 
       <main class="main-content">
