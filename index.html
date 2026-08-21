@@ -517,6 +517,7 @@ function showMenu() {
   
       >
         学習完了にする
+<span data-test-status="${lessonId}"></span>
       </button>
       <button
   onclick="event.stopPropagation(); showTest('${courseId}', ${index})">
@@ -828,7 +829,9 @@ function checkLessonTest(courseId, lessonIndex) {
     Math.round((score / test.questions.length) * 100);
 
   const passed = percent >= 70;
-
+if (passed) {
+  localStorage.setItem(`testPassed_${courseId}_${lessonIndex}`, "true");
+}
   document.getElementById("testResult").innerHTML =
     passed
       ? `✅ 合格です！ ${score} / ${test.questions.length}問正解（${percent}%）`
@@ -951,6 +954,8 @@ async function completeLesson(lessonId, courseId = 'basic_ai') {
   }
 }
 async function showCompletedLessons(courseId = 'basic_ai') {
+  const course = courses[courseId];
+if (!course) return;
   const { data: { user } } = await supabaseClient.auth.getUser();
 
   if (!user) return;
@@ -966,7 +971,20 @@ async function showCompletedLessons(courseId = 'basic_ai') {
     console.error(error);
     return;
   }
+course.lessons.forEach((lessonTitle, index) => {
+  const lessonId = `lesson${index + 1}`;
+  const passed = localStorage.getItem(
+    `testPassed_${courseId}_${index}`
+  ) === "true";
 
+  const status = document.querySelector(
+    `[data-test-status="${lessonId}"]`
+  );
+
+  if (status && passed) {
+    status.textContent = "✅ テスト合格済み";
+  }
+});
   data.forEach(item => {
     const button = document.querySelector(
   `button[data-lesson-id="${item.lesson_id}"]`
