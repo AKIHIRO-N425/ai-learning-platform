@@ -425,38 +425,7 @@ const courses = {
         document.getElementById("message").innerText =
           "ログイン失敗：" + error.message;
      } else {
-  document.body.innerHTML = `
-  <div class="dashboard-layout">
-
-    <aside class="sidebar">
-      <h2>学習コース</h2>
-      <div id="courseList"></div>
-    </aside>
-
-    <main class="main-content">
-      <h1>AI学習プラットフォーム</h1>
-
-      <div class="dashboard-card">
-        <h2>学習ダッシュボード</h2>
-        <p>左のコースを選んで学習を進めてください。</p>
-      </div>
-    </main>
-
-  </div>
-`;
-
-const courseList = document.getElementById("courseList");
-
-Object.entries(courses).forEach(([courseId, course], index) => {
-  courseList.innerHTML += `
-    <div class="sidebar-course" onclick="showCourse('${courseId}')">
-      <strong>第${index + 1}コース</strong><br>
-      ${course.title}<br>
-      <small>${course.lessons.length}本の教材</small>
-    </div>
-  `;
-});
-}
+ showMenu();
 }
 function showMenu() {
   document.body.innerHTML = `
