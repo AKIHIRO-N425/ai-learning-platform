@@ -261,10 +261,15 @@ detail.innerHTML = `
   <p>完了レッスン：${completedCount}件</p>
   <p>テスト実施回数：${testResults.length}回</p>
   <p>平均スコア：${testResults.length > 0 ? averageScore : "-"}</p>
-  <ul>
-    ${progressHtml}
-    ${testResultsHtml}
-  </ul>
+ <h4>学習状況（動画視聴）</h4>
+<ul>
+  ${progressHtml}
+</ul>
+
+<h4>テスト結果</h4>
+<ul>
+  ${testResultsHtml}
+</ul>
 `;
 
 const oldDetail = document.getElementById("studentDetail");
