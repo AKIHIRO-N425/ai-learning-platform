@@ -581,16 +581,19 @@ function showMenu() {
     ? Math.round((completedLessons / totalLessons) * 100)
     : 0;
 
-  let passedTests = 0;
+const { data: testResults, error: testError } = await supabaseClient
+  .from("test_results")
+  .select("course_id, lesson_index, passed")
+  .eq("user_id", user.id)
+  .eq("passed", true);
 
-  Object.entries(courses).forEach(([courseId, course]) => {
-    course.lessons.forEach((lesson, index) => {
-      if (localStorage.getItem(`testPassed_${courseId}_${index}`) === "true") {
-        passedTests++;
-      }
-    });
-  });
+if (testError) {
+  console.error(testError);
+  testE1.textContent = "テスト進捗を取得できませんでした";
+  return;
+}
 
+const passedTests = testResults ? testResults.length : 0;
   const testPercent = totalLessons
     ? Math.round((passedTests / totalLessons) * 100)
     : 0;
