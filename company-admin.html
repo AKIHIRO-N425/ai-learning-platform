@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>企業管理画面 | AI学習プラットフォーム</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+      background: #f4f7fb;
+      color: #1f2937;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      color: #0f172a;
+    }
+
+    button {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      background: #2563eb;
+      color: white;
+      cursor: pointer;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      padding: 14px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+    }
+
+    th {
+      background: #f8fafc;
+    }
+
+    #message {
+      color: #64748b;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <div>
+      <h1>企業管理画面</h1>
+      <p id="companyName">企業情報を読み込み中...</p>
+    </div>
+
+    <button onclick="logout()">ログアウト</button>
+  </div>
+
+  <div class="card">
+    <h2>受講者一覧</h2>
+    <p>自社に所属する受講者を確認できます。</p>
+
+    <div id="message">読み込み中...</div>
+
+    <table id="studentTable" style="display:none;">
+      <thead>
+        <tr>
+          <th>受講者名</th>
+          <th>権限</th>
+          <th>企業ID</th>
+        </tr>
+      </thead>
+
+      <tbody id="studentList"></tbody>
+    </table>
+  </div>
+<script>
+  const supabaseUrl = "https://xjwmgvvoxunsqdjttpdo.supabase.co";
+  const supabaseKey = "sb_publishable_VOQIwc0dAsPP233GHl9Cog_Kle9Ybfd";
+
+  const supabaseClient =
+    supabase.createClient(supabaseUrl, supabaseKey);
+
+  async function loadCompanyAdmin() {
+
+    // 現在ログインしているユーザーを取得
+    const { data: { user } } =
+      await supabaseClient.auth.getUser();
+
+    if (!user) {
+      window.location.href = "index.html";
+      return;
+    }
+
+    // ログインユーザーの権限・企業IDを取得
+    const { data: profile, error: profileError } =
+      await supabaseClient
+        .from("profiles")
+        .select("role, company_id, name")
+        .eq("user_id", user.id)
+        .single();
+
+    if (
+      profileError ||
+      !profile ||
+      profile.role !== "company_admin" ||
+      !profile.company_id
+    ) {
+      alert("企業管理者のみアクセスできます");
+      window.location.href = "index.html";
+      return;
+    }
+
+    // 企業情報を取得
+    const { data: company } =
+      await supabaseClient
+        .from("companies")
+        .select("company_name, company_code")
+        .eq("company_code", profile.company_id)
+        .single();
+
+    document.getElementById("companyName").textContent =
+      company
+        ? company.company_name + " 管理者画面"
+        : "企業管理者画面";
+
+    // 同じ企業の受講者だけ取得
+    const { data: students, error: studentError } =
+      await supabaseClient
+        .from("profiles")
+        .select("name, role, company_id")
+        .eq("company_id", profile.company_id)
+        .eq("role", "student")
+        .order("name");
+
+    if (studentError) {
+      console.error(studentError);
+      document.getElementById("message").textContent =
+        "受講者情報の取得に失敗しました";
+      return;
+    }
+
+    const studentList =
+      document.getElementById("studentList");
+
+    studentList.innerHTML = "";
+
+    students.forEach(student => {
+
+      const row = document.createElement("tr");
+
+      row.innerHTML = `
+        <td>${student.name || "名前未設定"}</td>
+        <td>受講者</td>
+        <td>${student.company_id}</td>
+      `;
+
+      studentList.appendChild(row);
+    });
+
+    document.getElementById("message").textContent =
+      `受講者数：${students.length}人`;
+
+    document.getElementById("studentTable").style.display =
+      students.length > 0 ? "table" : "none";
+  }
+
+  async function logout() {
+    await supabaseClient.auth.signOut();
+    window.location.href = "index.html";
+  }
+
+  loadCompanyAdmin();
+</script>
+
+</body>
+</html>
