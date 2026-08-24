@@ -1203,16 +1203,24 @@ if (!course) return;
 .eq('user_id', user.id)
 .eq('course_id', courseId)
 .eq('completed', true);
-
-  if (error) {
-    console.error(error);
+const { data: testResults, error: testError } = await supabaseClient
+  .from("test_results")
+  .select("course_id, lesson_index, passed")
+  .eq("user_id", user.id)
+  .eq("course_id", courseId)
+  .eq("passed", true);
+ if (error || testError) {
+   console.error(error || testError);
     return;
   }
 course.lessons.forEach((lessonTitle, index) => {
   const lessonId = `lesson${index + 1}`;
-  const passed = localStorage.getItem(
-    `testPassed_${courseId}_${index}`
-  ) === "true";
+const passed = testResults?.some(
+  item =>
+    item.course_id === courseId &&
+    Number(item.lesson_index) === index &&
+    item.passed === true
+);
 
   const status = document.querySelector(
     `[data-test-status="${lessonId}"]`
