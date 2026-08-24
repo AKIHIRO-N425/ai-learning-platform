@@ -197,6 +197,19 @@ document.getElementById("learningProgressBar").style.width =
     : 0;
     document.getElementById("averageScore").textContent =
   `${averageScore}点`;
+    const passedTests = testResults.filter(result => result.passed).length;
+const totalTests = 66 * studentCount;
+
+const testCompletionRate =
+  totalTests > 0
+    ? Math.round((passedTests / totalTests) * 100)
+    : 0;
+
+document.getElementById("testProgressText").textContent =
+  `合格テスト：${passedTests}件 / 全体：${totalTests}件（${testCompletionRate}%）`;
+
+document.getElementById("testProgressBar").style.width =
+  `${testCompletionRate}%`;
   }
 
 async function checkAdminAndLoad() {
