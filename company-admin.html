@@ -222,7 +222,22 @@ const averageScore =
         testResults.length
       )
     : 0;
+const testResultsHtml = testResults.length > 0
+  ? testResults.map(item => {
+      const percent = item.total_questions > 0
+        ? Math.round((Number(item.score) / Number(item.total_questions)) * 100)
+        : 0;
 
+      return `
+        <li>
+          ${item.course_id} / lesson${Number(item.lesson_index) + 1}
+          ｜${item.score}/${item.total_questions}点
+          ｜${percent}%
+          ｜${item.passed ? "合格" : "不合格"}
+        </li>
+      `;
+    }).join("")
+  : "<li>テスト結果はありません</li>";
 const progressHtml = progress.length > 0
   ? progress.map(item => `
       <li>
@@ -245,6 +260,7 @@ detail.innerHTML = `
   <p>平均スコア：${testResults.length > 0 ? averageScore : "-"}</p>
   <ul>
     ${progressHtml}
+    ${testResultsHtml}
   </ul>
 `;
 
