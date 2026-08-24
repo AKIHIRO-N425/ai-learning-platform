@@ -241,7 +241,9 @@ const testResultsHtml = testResults.length > 0
 const progressHtml = progress.length > 0
   ? progress.map(item => `
       <li>
-        第${Number(String(item.course_id).replace("course", ""))}コース 第${Number(String(item.lesson_id).replace("lesson", ""))}回
+        第${item.course_id
+  ? Number(String(item.course_id).replace("course", ""))
+  : 1}コース 第${Number(String(item.lesson_id).replace("lesson", ""))}回
         ${item.completed ? "：完了" : "：未完了"}
       </li>
     `).join("")
