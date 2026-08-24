@@ -230,7 +230,7 @@ const testResultsHtml = testResults.length > 0
 
       return `
         <li>
-          ${item.course_id} / lesson${Number(item.lesson_index) + 1}
+          第${Number(String(item.course_id).replace("course", ""))}コース 第${Number(item.lesson_index) + 1}回
           ｜${item.score}/${item.total_questions}点
           ｜${percent}%
           ｜${item.passed ? "合格" : "不合格"}
@@ -241,7 +241,7 @@ const testResultsHtml = testResults.length > 0
 const progressHtml = progress.length > 0
   ? progress.map(item => `
       <li>
-        ${item.lesson_id}
+        第${Number(String(item.course_id).replace("course", ""))}コース 第${Number(String(item.lesson_id).replace("lesson", ""))}回
         ${item.completed ? "：完了" : "：未完了"}
       </li>
     `).join("")
