@@ -64,6 +64,7 @@
     <div style="margin-top:30px; line-height:2.6;">
       <div>📊 ダッシュボード</div>
       <div>👤 ユーザー管理</div>
+      <div onclick="showCompanies()" style="cursor:pointer;">🏢 企業管理</div>
       <div>📚 コンテンツ管理</div>
       <div>📝 テスト管理</div>
       <div>📈 進捗管理</div>
@@ -237,6 +238,65 @@ async function checkAdminAndLoad() {
 }
 
 checkAdminAndLoad();
+  async function showCompanies() {
+  const { data: companies, error } = await supabaseClient
+    .from("companies")
+    .select("*")
+    .order("id");
+
+  if (error) {
+    console.error(error);
+    alert("企業情報の取得に失敗しました");
+    return;
+  }
+
+  const { data: students, error: studentError } = await supabaseClient
+    .from("profiles")
+    .select("user_id, name, role, company_id")
+    .eq("role", "student");
+
+  if (studentError) {
+    console.error(studentError);
+    alert("受講者情報の取得に失敗しました");
+    return;
+  }
+
+  const main = document.querySelector("main");
+
+  main.innerHTML = `
+    <h1>企業管理</h1>
+    <p style="color:#777;">契約企業ごとの受講者を確認できます。</p>
+
+    <div style="margin-top:30px;">
+      ${companies.map(company => {
+        const members = students.filter(
+          student => student.company_id === company.company_code
+        );
+
+        return `
+          <div style="background:#fff; padding:24px; margin-bottom:20px;
+                      border-radius:12px; border:1px solid #e5e7eb;">
+            <h2>${company.company_name}</h2>
+            <p>企業コード：${company.company_code}</p>
+            <p>担当者：${company.contact_name || "-"}</p>
+            <p>受講者数：${members.length}人</p>
+
+            <div style="margin-top:15px;">
+              ${members.length
+                ? members.map(member => `
+                    <div style="padding:10px 0; border-top:1px solid #eee;">
+                      👤 ${member.name || "名前未設定"}
+                    </div>
+                  `).join("")
+                : "<p>受講者はまだ登録されていません。</p>"
+              }
+            </div>
+          </div>
+        `;
+      }).join("")}
+    </div>
+  `;
+}
 </script>
     </main>
 </div>
