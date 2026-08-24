@@ -95,6 +95,7 @@
           <th>受講者名</th>
           <th>権限</th>
           <th>企業ID</th>
+          <th>進捗</th>
         </tr>
       </thead>
 
@@ -155,7 +156,7 @@
     const { data: students, error: studentError } =
       await supabaseClient
         .from("profiles")
-        .select("name, role, company_id")
+        .select("user_id, name, role, company_id")
         .eq("company_id", profile.company_id)
         .eq("role", "student")
         .order("name");
@@ -173,25 +174,49 @@
     studentList.innerHTML = "";
 
     students.forEach(student => {
+  const row = document.createElement("tr");
 
-      const row = document.createElement("tr");
+  row.innerHTML = `
+    <td>${student.name || "名前未設定"}</td>
+    <td>受講者</td>
+    <td>${student.company_id}</td>
+    <td><button type="button" onclick="viewStudent('${student.user_id}')">進捗を見る</button></td>
+  `;
 
-      row.innerHTML = `
-        <td>${student.name || "名前未設定"}</td>
-        <td>受講者</td>
-        <td>${student.company_id}</td>
-      `;
-
-      studentList.appendChild(row);
-    });
+  studentList.appendChild(row);
+});
 
     document.getElementById("message").textContent =
       `受講者数：${students.length}人`;
 
     document.getElementById("studentTable").style.display =
       students.length > 0 ? "table" : "none";
+    
+  }
+async function viewStudent(userId) {
+  const { data: progress, error: progressError } = await supabaseClient
+    .from("learning_progress")
+    .select("*")
+    .eq("user_id", userId);
+
+  const { data: testResults, error: testError } = await supabaseClient
+    .from("test_results")
+    .select("*")
+    .eq("user_id", userId);
+
+  if (progressError || testError) {
+    console.error(progressError || testError);
+    alert("進捗情報の取得に失敗しました");
+    return;
   }
 
+  console.log("学習進捗:", progress);
+  console.log("テスト結果:", testResults);
+
+  alert(
+    `学習進捗：${progress.length}件\nテスト結果：${testResults.length}件`
+  );
+}
   async function logout() {
     await supabaseClient.auth.signOut();
     window.location.href = "index.html";
