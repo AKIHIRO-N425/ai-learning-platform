@@ -213,9 +213,46 @@ async function viewStudent(userId) {
   console.log("学習進捗:", progress);
   console.log("テスト結果:", testResults);
 
-  alert(
-    `学習進捗：${progress.length}件\nテスト結果：${testResults.length}件`
-  );
+  const completedCount = progress.filter(item => item.completed).length;
+
+const averageScore =
+  testResults.length > 0
+    ? Math.round(
+        testResults.reduce((sum, item) => sum + Number(item.score || 0), 0) /
+        testResults.length
+      )
+    : 0;
+
+const progressHtml = progress.length > 0
+  ? progress.map(item => `
+      <li>
+        ${item.lesson_id}
+        ${item.completed ? "：完了" : "：未完了"}
+      </li>
+    `).join("")
+  : "<li>学習履歴はありません</li>";
+
+const detail = document.createElement("div");
+detail.style.marginTop = "20px";
+detail.style.padding = "20px";
+detail.style.background = "#f8fafc";
+detail.style.borderRadius = "10px";
+
+detail.innerHTML = `
+  <h3>受講者の学習状況</h3>
+  <p>完了レッスン：${completedCount}件</p>
+  <p>テスト実施回数：${testResults.length}回</p>
+  <p>平均スコア：${testResults.length > 0 ? averageScore : "-"}</p>
+  <ul>
+    ${progressHtml}
+  </ul>
+`;
+
+const oldDetail = document.getElementById("studentDetail");
+if (oldDetail) oldDetail.remove();
+
+detail.id = "studentDetail";
+document.querySelector(".card").appendChild(detail);
 }
   async function logout() {
     await supabaseClient.auth.signOut();
